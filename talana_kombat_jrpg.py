@@ -17,19 +17,24 @@ class Personaje:
         
 
     def calcular_danio(self, movimiento='', golpe=''):
+        if movimiento == '' or golpe == '':
+             return 0, f'- El jugador {self.nombre} no realiza ninguna acción\n'
         if movimiento == None or golpe == None:
             return 0, f'- {self.nombre} no realiza ninguna accion\n'
+            
         for ataque in self.golpes_personaje:
-            movimiento_ataque = ataque['combinacion'].split('+')[0]
-            golpe_ataque = ataque['combinacion'].split('+')[1]
             if movimiento and golpe == '':
                 return 0, f'- {self.nombre} se mueve\n'
             if golpe == '':
                 return 0, f'- El jugador {self.nombre} no realiza ningun golpe'
-            if movimiento != '' and movimiento_ataque in movimiento and golpe == golpe_ataque:
-                nombre_ataque = ataque['nombre']
-                return ataque['energia'], f'- {self.nombre} realiza un {nombre_ataque}\n'
-            elif golpe == 'P':
+            movimiento_ataque = ataque['combinacion'].split('+')[0]
+            golpe_ataque = ataque['combinacion'].split('+')[1]
+            indice_coincidencia = movimiento.find(movimiento_ataque)
+            if movimiento != '' and indice_coincidencia != -1:
+                if indice_coincidencia + len(movimiento_ataque) == len(movimiento) and golpe == golpe_ataque:
+                    nombre_ataque = ataque['nombre']
+                    return ataque['energia'], f'- {self.nombre} realiza un {nombre_ataque}\n'
+            if golpe == 'P':
                 return 1, f'- {self.nombre} lanza un puñetazo infligiendo 1 de daño\n'
             elif golpe == 'K':
                 return 1, f'- {self.nombre} lanza una patada infligiendo 1 de daño\n'
@@ -48,8 +53,8 @@ def simular_combate(json_pelea):
     player1.agregar_movimiento('DSD+P', 3, 'Taladoken')
     player1.agregar_movimiento('SD+K', 2, 'Remuyuken')
     
-    player2.agregar_movimiento('SA+P', 3, 'Remuyuken')
-    player2.agregar_movimiento('ASA+K', 2, 'Taladoken')
+    player2.agregar_movimiento('SA+K', 3, 'Remuyuken')
+    player2.agregar_movimiento('ASA+P', 2, 'Taladoken')
     
     json_player1 = json_pelea['player1']
     json_player2 = json_pelea['player2']
@@ -89,10 +94,10 @@ def simular_combate(json_pelea):
         player2.energia -= danio_player1
         
         if player2.energia <= 0:
-            texto += f"- {player2.nombre} logra dejar sin energia a su oponente y aún le queda {player2.energia} de energía\n"
+            texto += f"- {player1.nombre} logra dejar sin energia a su oponente y aún le queda {player1.energia} de energía\n"
             return texto
         elif player1.energia <= 0:
-            texto +=  f"- {player1.nombre} logra dejar sin energia a su oponente y aún le queda {player1.energia} de energía\n"
+            texto +=  f"- {player2.nombre} logra dejar sin energia a su oponente y aún le queda {player2.energia} de energía\n"
             return texto
 
     if player1.energia == player2.energia:
@@ -114,7 +119,7 @@ def main():
     json_pelea3 = '{"player1": {"movimientos": ["DSD", "S"],"golpes": ["P", ""]},"player2": {"movimientos": ["", "ASA", "DA", "AAA", "", "SA"],"golpes": ["P", "", "P", "K", "K", "K"]}}'
 
     #Parsear el JSON
-    json_pelea = json.loads(json_pelea3)
+    json_pelea = json.loads(json_pelea1)
 
     #Simular el combate
     resultado = simular_combate(json_pelea)
