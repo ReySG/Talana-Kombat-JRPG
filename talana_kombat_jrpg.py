@@ -1,10 +1,6 @@
 import json
 from itertools import zip_longest
 
-GOLPES = {
-    
-}
-
 class Personaje:
     def __init__(self, nombre, energia):
         self.nombre = nombre
