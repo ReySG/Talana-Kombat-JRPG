@@ -92,9 +92,6 @@ def simular_combate(json_pelea):
         player1.energia -= danio_player2
         player2.energia -= danio_player1
         
-        # texto +=  f"- Vida restante del jugador {player1.nombre} = {player1.energia}\n"
-        # texto +=  f"- Vida restante del jugador {player2.nombre} = {player2.energia}\n"
-        
         if player2.energia <= 0:
             texto += f"- {player2.nombre} logra dejar sin energia a su oponente y aún le queda {player2.energia} de energía\n"
             return texto
